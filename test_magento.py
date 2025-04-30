@@ -13,7 +13,7 @@ import time
 def driver():
     options = Options()
     options.add_argument("--start-maximized")
-    options.add_argument("--headless")  
+    #options.add_argument("--headless")  
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -23,7 +23,6 @@ def driver():
     yield driver
     driver.quit()
 
-@pytest.fixture
 def login(driver):
     driver.get("https://magento.softwaretestingboard.com/")
     wait = WebDriverWait(driver, 10)
@@ -52,7 +51,7 @@ def login(driver):
     assert "magento.softwaretestingboard" in driver.current_url
     return driver
 
-def test_first_choice(login):
+def test_first_choice(driver):
     driver = login
     wait = WebDriverWait(driver, 10)
 
@@ -73,3 +72,14 @@ def test_first_choice(login):
     ActionChains(driver).move_to_element(hoodies_choice).perform()
     hoodies_choice.click()
     assert "hoodies" in driver.current_url
+
+def test_add_jacket_in_to_cart(login):
+    driver = login
+    wait = WebDriverWait(driver, 10)
+
+    yoga_jacket = driver.find_element(By.XPATH, "//*[@id='maincontent']/div[3]/div[1]/div[3]/ol/li[5]/div")
+    driver.execute_script("arguments[0].scrollIntoView(true);", yoga_jacket)
+    jade_jacket = wait.until(
+       EC.presence_of_element_located(yoga_jacket) 
+    )
+    ActionChains(driver).move_to_element(jade_jacket).perform()
